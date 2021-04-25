@@ -1,0 +1,132 @@
+---
+title: "Actividad 3"
+output:
+  pdf_document: default
+---
+
+Análisis de biología computacional `  BT1013.525`
+
+```
+Bryan Manuel De la O Perea  A01246337
+Andrés Sarellano Acevedo    A01245418
+Maximiliano Villegas García A01635825
+Víctor Manuel Puga Ruiz     A01568636
+```
+
+# Dependencies
+
+```{r}
+# navigate to your working directory (varies per user)
+setwd("/cloud/project/Activities")
+
+install.packages("seqinr")
+library(seqinr)
+```
+
+# Genome Files
+
+```{r}
+# must upload/move the sequences to the working directory
+
+zika <- read.fasta("Sequences/Zika.fasta")[[1]]
+sars.covid <- read.fasta("Sequences/SarsCovid.fasta")[[1]]
+wu.han <- read.fasta("Sequences/Wu-Han-1.fasta")[[1]]
+mers <- read.fasta("Sequences/MersCovid.fasta")[[1]]
+dengue <- read.fasta("Sequences/Dengue.fasta")[[1]]
+h1n1 <- read.fasta("Sequences/H1N1.fasta")[[1]]
+```
+
+\newpage
+
+# Functions
+
+```{r}
+# 1
+seq.length <- function(dna.seq) {
+  getLength(dna.seq)
+}
+
+# 2
+seq.composition <- function(dna.seq) {
+  count(dna.seq, 1)
+}
+
+# 3
+seq.gc <- function(dna.seq) {
+  GC(dna.seq)
+}
+
+#4
+seq.translate <- function(dna.seq) {
+  comp(dna.seq)
+}
+
+# 5
+seq.composition.graph <- function(dna.seq) {
+  cols = c(
+    "a" = "#106BFF",
+    "t" = "#FECF0F",
+    "g" = "#30D33B", 
+    "c" = "#FC2B2D"
+  )
+  pie(seq.composition(dna.seq), col = cols)
+}
+
+# Stats
+stats <- function(dna.seq) {
+  annotations <- getAnnot(dna.seq)
+  l <- seq.length(dna.seq)
+  composition <- seq.composition(dna.seq)
+  gc_amount <- seq.gc(dna.seq)
+  translation <- seq.translate(dna.seq)
+
+  cat(annotations, "\n\n")
+  cat("Length:", l, "bases", "\n\n")
+  cat("Composition:")
+  print(composition)
+  cat("\nCG:", gc_amount, "\n\n")
+  cat("Original:   ", dna.seq[1:60], " ... (first 60)\n", sep = "")
+  cat("Complement: ", translation[1:60], " ... (first 60)\n\n", sep = "")
+  cat("Graph:")
+  seq.composition.graph(dna.seq)
+}
+```
+\newpage
+
+# Zika
+```{r}
+stats(zika)
+```
+\newpage
+
+# SARS Coronavirus
+```{r}
+stats(sars.covid)
+```
+\newpage
+
+# Wuhan seafood market pneumonia virus isolate Wuhan-Hu-1
+```{r}
+# MN908947.1 was first thought to be pneumonia, 
+# but in version MN908947.3 it is now known to be a coronavirus
+stats(wu.han)
+```
+\newpage
+
+# MERS Coronavirus
+```{r}
+stats(mers)
+```
+\newpage
+
+# Dengue virus 1 
+```{r}
+stats(dengue)
+```
+\newpage
+
+# Influenza H1N1
+```{r}
+stats(h1n1)
+```
+

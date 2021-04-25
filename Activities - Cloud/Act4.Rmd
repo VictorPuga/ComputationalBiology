@@ -1,0 +1,259 @@
+---
+title: "Actividad 4"
+output:
+  pdf_document: default
+---
+
+Análisis de biología computacional `  BT1013.525`
+
+```
+Bryan Manuel De la O Perea  A01246337
+Andrés Sarellano Acevedo    A01245418
+Maximiliano Villegas García A01635825
+Víctor Manuel Puga Ruiz     A01568636
+```
+
+# Dependencies
+
+```{r}
+# navigate to your working directory (varies per user)
+setwd("/cloud/project/Activities")
+options(connectionObserver = NULL)
+
+install <- function(lib) {
+  if (!requireNamespace(lib, quietly = TRUE)) {
+    install.packages(lib)
+  }
+}
+
+install("ape")
+install("phytools")
+install("seqinr")
+
+if (FALSE) {
+install("BiocManager")
+BiocManager::install("Biostrings")
+library(Biostrings)
+  
+}
+
+
+#install("phangorn")
+#install("geiger")
+
+library(ape)
+library(phytools)
+library(seqinr)
+#library(phangorn)
+#library(geiger)
+gc()
+```
+
+# Genome Files
+
+```{r}
+# must upload/move the sequences to the working directory
+
+reference <- read.fasta(
+  "SARS-CoV-2 Sequences (Sample)/SARS-CoV-2 (Reference).fasta",
+  as.string = TRUE, seqonly = TRUE
+)[[1]]
+
+B.1.1.7   <- read.fasta(
+  "SARS-CoV-2 Sequences (Sample)/SARS-CoV-2 (B.1.1.7) Sample.fasta",
+  as.string = TRUE, seqonly = TRUE
+)[[1]]
+
+if (FALSE) {
+B.1.351   <- read.fasta("SARS-CoV-2 Sequences (Sample)/SARS-CoV-2 (B.1.351) Sample.fasta")[[1]]
+P.1       <- read.fasta("SARS-CoV-2 Sequences (Sample)/SARS-CoV-2 (P.1) Sample.fasta")[[1]]
+B.1.427   <- read.fasta("SARS-CoV-2 Sequences (Sample)/SARS-CoV-2 (B.1.427) Sample.fasta")[[1]]
+B.1.429   <- read.fasta("SARS-CoV-2 Sequences (Sample)/SARS-CoV-2 (B.1.429) Sample.fasta")[[1]]
+all.variants = list(
+  "Reference" = reference, 
+  "B.1.1.7"   = B.1.1.7, 
+  "B.1.351"   = B.1.351, 
+  "P.1"       = P.1, 
+  "B.1.427"   = B.1.427, 
+  "B.1.429"   = B.1.429
+)
+}
+gc()
+```
+\newpage
+
+# Intro
+## `ape`: Analysis of Phylogenetics and Evolution
+```{r}
+vert.tree <- read.tree(text =  "(Orangutans, (Gorillas, ((Chimpanzees, Bonobos), Humans)));")
+plot(vert.tree, no.margin = TRUE, edge.width = 5)
+```
+## `phytools`: Phylogenetic Tools for Comparative Biology (and Other Things)
+```{r}
+vert.tree <- read.tree(text = "(((cow, pig), whale), (bat, (lemur, human)));")
+# unrooted
+plot(
+  unroot(vert.tree),
+  type = "unrooted",
+  no.margin = TRUE,
+  lab4ut = "axial",
+  edge.width = 2
+)
+
+```
+## Case Study
+```{r}
+virus <- c(  "JX869059", "AY508724", "MN908947", "AY390556", "AY278489", "MN985325","AY485277","MT292571")
+
+v1 = s2c(reference)
+v2 = s2c(B.1.1.7)
+dotPlot(v1, v2)
+
+```
+
+
+\newpage
+\newpage
+\newpage
+# Functions
+
+```{r}
+seq.length <- function(dna.seq) {
+  getLength(dna.seq)
+}
+
+seq.composition <- function(dna.seq) {
+  count(dna.seq, 1)
+}
+
+seq.gc <- function(dna.seq) {
+  GC(dna.seq)
+}
+
+seq.translate <- function(dna.seq) {
+  comp(dna.seq)
+}
+
+seq.composition.graph <- function(dna.seq) {
+  cols = c(
+    "a" = "#106BFF",
+    "t" = "#FECF0F",
+    "g" = "#30D33B", 
+    "c" = "#FC2B2D"
+  )
+  pie(seq.composition(dna.seq), col = cols)
+}
+
+stats <- function(dna.seq) {
+  annotations <- getAnnot(dna.seq)
+  l <- seq.length(dna.seq)
+  composition <- seq.composition(dna.seq)
+  gc_amount <- seq.gc(dna.seq)
+  translation <- seq.translate(dna.seq)
+
+  cat(substring(annotations, 1, 79), "[...]\n", substring(annotations, 80), "\n\n")
+  cat("Length:", l, "bases", "\n\n")
+  cat("Composition:")
+  print(composition)
+  cat("\nCG:", gc_amount, "\n\n")
+  cat("Original:   ", dna.seq[1:60], " ... (first 60)\n", sep = "")
+  cat("Complement: ", translation[1:60], " ... (first 60)\n\n", sep = "")
+  cat("Graph:")
+  seq.composition.graph(dna.seq)
+}
+```
+\newpage
+
+# Reference Genome
+```{r}
+stats(reference)
+```
+\newpage
+
+# B.1.1.7 Variant
+```{r}
+stats(B.1.1.7)
+```
+\newpage
+
+# B.1.351 Variant
+```{r}
+stats(B.1.351)
+```
+\newpage
+
+# P.1 Variant
+```{r}
+stats(P.1)
+```
+\newpage
+
+# B.1.427 Variant
+```{r}
+stats(B.1.427)
+```
+\newpage
+
+# B.1.429 Variant
+```{r}
+stats(B.1.429)
+```
+\newpage
+
+# Comparison
+```{r}
+data <- data.frame(
+  Variant = character(), 
+  Base = character(), 
+  Value = integer()
+)
+
+for (i in names(all.variants)) {
+  comps <- seq.composition(all.variants[i][[1]])
+  n <- nrow(data)
+  data[n + 1,] <- list(Variant = i, Base = "A", Value = comps["a"])
+  data[n + 2,] <- list(Variant = i, Base = "T", Value = comps["t"])
+  data[n + 3,] <- list(Variant = i, Base = "G", Value = comps["g"])
+  data[n + 4,] <- list(Variant = i, Base = "C", Value = comps["c"])
+}
+
+variants <- data["Variant"][[1]]
+bases <- data["Base"][[1]]
+value <- data["Value"][[1]]
+
+
+if (FALSE) {
+  
+ggplot(data, aes(fill = bases, y = value, x = variants)) + 
+    geom_bar(position = "stack", stat = "identity") + 
+    scale_fill_manual(values = c("#106BFF", "#FECF0F", "#30D33B", "#FC2B2D")) + 
+    geom_text(
+      aes(colour = "#000000", label=value), 
+      position=position_stack(), 
+      vjust=1.5,
+      colour = "white", 
+      fontface = "bold"
+    ) + 
+    labs(
+      title = "Nitrogenous Base Distribution per Variant",
+      subtitle = "for SARS-CoV-2",
+      caption = "Data source: NCBI",
+      x = "Variants", 
+      y = "Quantity", 
+      fill = "Bases"
+    )
+}  
+```
+
+## Interpretación
+Todas las variantes del virus tienen diferente cantidad de nucleótidos, 
+y differente composición de los mismos, sin embargo, a la hora de compararlos 
+se pueden observar que las variaciones que hay entre ellos son míminas, y casi
+desapercibidas.
+
+Esto es interesante, ya que estas minúsculas mutaciones en el genoma del virus 
+pueden llegar a tener rasgos que los vuelvan resistentes a las vacunas que
+se desarrollen. Otro efecto de las mutaciones puede ser el más facil contagio, 
+o peores síntomas. Este es el motivo por el que se hacen investigaciones para 
+detectar las variantes, sus probables causas de mutación, y mitigar posibles 
+efectos negativos que generen.

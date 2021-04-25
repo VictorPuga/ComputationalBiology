@@ -1,0 +1,116 @@
+---
+title: "Actividad 1"
+output:
+  pdf_document: default
+---
+
+Análisis de biología computacional `  BT1013.525`
+
+Víctor Manuel Puga Ruiz
+A01568636
+
+
+## 1
+```{r}
+x <- c(10, 11, 13, -1, 6, 3)
+
+print(x)
+```
+
+## 2 
+```{r}
+est.x <- c(
+  mean(x), # mean
+  sd(x),   # standard deviation
+  var(x)   # variance
+)
+
+print(est.x)
+```
+
+## 3 
+```{r}
+my.seq <- seq(20, 50)
+print(my.seq)
+
+my.mean <- mean(c(20:60))
+print(my.mean)
+
+my.sum <- sum(c(51:91))
+print(my.sum)
+```
+
+## 4
+```{r}
+pool <- c(-100:50)
+my.sample <- sample(pool, 10)
+
+print(my.sample)
+```
+
+## 5
+```{r}
+fb <- numeric(10)
+fb[1] <- fb[2] <- 1
+
+for (i in 3:10) {
+  fb[i] <- fb[i-2] + fb[i-1]
+}
+
+print(fb)
+```
+
+## 6
+```{r}
+vec <- c(10, 20, 30, 4, 50, -60)
+
+cat("min", min(vec), "\n")
+cat("max", max(vec), "\n")
+```
+
+## 7
+```{r}
+multiplica <- function(a, b) {
+  if (length(a) == length(b)) {
+    a * b
+  }
+}
+
+print(multiplica(c(10, 20), c(3, 4)))
+```
+
+## 8
+```{r}
+cuenta <- function(vec, search) {
+  total <- 0
+  
+  for (el in vec) {
+    if (el == search) {
+      total <- total + 1
+    }
+  }
+  
+  total
+}
+
+print(cuenta(c(10, 20, 10, 7, 24, 7, 5), 7))
+```
+
+## 9
+```{r}
+enesimo <- function(vec, n) {
+res <- c(vec[1])
+  for (i in seq(n+1, length(vec), by = n)) {
+    res <- append(res, vec[i])
+  }
+  res
+}
+
+v <- 1:100
+print(enesimo(v, 5))
+```
+
+## 10
+```{r}
+
+```

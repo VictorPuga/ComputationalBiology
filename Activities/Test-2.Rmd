@@ -1,0 +1,93 @@
+---
+title: "TEST 2"
+output:
+  pdf_document: default
+---
+
+```{r}
+library(seqinr)
+suppressMessages(library(Biostrings))
+library(ape)
+#setwd("~/Folders/Repos/RStudio Files")
+```
+# Procedure
+
+These are the steps we followed in order to identify the philogenetic tree of this
+variants of the SARS-Cov-2 virus
+
+- Collect all the sequences (5 variants + the reference genome)
+- Merge all the `.fastas` in a single file
+- Use the [Clustal Omega tool](https://www.ebi.ac.uk/Tools/msa/clustalo/) to align the sequences
+
+Our results: https://www.ebi.ac.uk/Tools/services/web/toolresult.ebi?jobId=clustalo-I20210423-005428-0562-5987948-p1m&analysis=alignments (will only be available for unti May 22, 2021)
+
+- Use the aligned sequences to calculate the "Pairwise Distances from DNA Sequences"
+- Use  this results to build the tree with "Neighbor-Joining Tree Estimation"
+
+```{r}
+accessions <- c(
+  "MN908947.3" = "Reference genome",
+  "MW913791.1" = "B.1.1.7",
+  "FR990267.1" = "B.1.351",
+  "FR990291.1" = "P.1",
+  "MW453109.1" = "B.1.427",
+  "MW778462.1" = "B.1.429" 
+)
+```
+
+
+```{r}
+ fileName <- "../SARS-CoV-2 Sequences (Sample)/clustalo-I20210423-005428-0562-5987948-p1m.clustal_num"
+
+my_data <- readChar(fileName, file.info(fileName)$size)
+
+my_data[0:1000]
+```
+
+
+```{r}
+all.seq = read.dna("../SARS-CoV-2 Sequences (Sample)/SARS-CoV-2 MERGED.fasta", format = "fasta")
+cat("Before alignment:\n\n")
+all.seq
+
+clust <- read.alignment("../SARS-CoV-2 Sequences (Sample)/clustalo-I20210423-005428-0562-5987948-p1m.clustal_num", format = "clustal", forceToLower = TRUE,)
+
+dna <- as.DNAbin(clust)
+cat("------------------------------------------------------------------\n")
+cat("After alignment with https://www.ebi.ac.uk/Tools/msa/clustalo:\n\n")
+dna
+
+D <- dist.dna(dna, model = "TN93")
+
+temp <- as.data.frame(as.matrix(D))
+
+# table.paint(temp, cleg=0, clabel.row=.5, clabel.col=.5) #darker shades of gray mean a larger distance # you can also make cool color plots but they're much more complicated because they use the image() function
+```
+
+```{r}
+tre <- nj(D)
+
+labs <- sapply(tre$tip.label, function(i) { paste(accessions[[i]], "  (", i, ")", sep = "") })
+tre$tip.label <- labs
+
+plot.phylo(tre)
+
+plot(unroot(tre),type="unrooted",no.margin=TRUE,lab4ut="axial",
+    edge.width=2)
+image(dna, show.bases = TRUE)
+```
+
+```{r}
+x <- as.vector(D)
+y <- as.vector(as.dist(cophenetic(tre)))
+plot(x, y, xlab="original pairwise distances", ylab="pairwise distances on the tree", main="Is NJ appropriate?", pch=20, cex=3)
+abline(lm(y~x), col="red")
+```
+
+
+# References
+
+https://www.rdocumentation.org/packages/ape/versions/5.4-1/topics/dist.dna
+https://stackoverflow.com/questions/33301632/tajimas-d-for-sequences-of-different-length
+https://fuzzyatelin.github.io/bioanth-stats/module-24/module-24.html#objectives
+
