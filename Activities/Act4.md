@@ -13,6 +13,7 @@ Actividad 4
     -   [Complete alignment](#complete-alignment)
     -   [Difference matrix (between
         sequences)](#difference-matrix-between-sequences)
+-   [Using `ggplot2`](#using-ggplot2)
 -   [Analysis 2: Different variants of
     coronavirus](#analysis-2-different-variants-of-coronavirus)
     -   [Before alignment](#before-alignment-1)
@@ -24,7 +25,8 @@ Actividad 4
     -   [Complete alignment](#complete-alignment-1)
     -   [Difference matrix (between
         sequences)](#difference-matrix-between-sequences-1)
--   [Key takeaways](#key-takeaways)
+-   [Using `ggplot2`](#using-ggplot2-1)
+-   [Key learnings](#key-learnings)
 -   [References](#references)
 
 Análisis de biología computacional `BT1013.525`
@@ -65,9 +67,11 @@ tree of these variants of the SARS-CoV-2 virus:
 ## Dependencies
 
 ``` r
-library(seqinr)
+suppressMessages(library(seqinr))
 suppressMessages(library(Biostrings))
 suppressMessages(library(ape))
+suppressMessages(library(ggplot2))
+suppressMessages(library(ggtree))
 ```
 
 # Analysis 1
@@ -82,6 +86,15 @@ read.file <- function(loc) {
   my_data <- readChar(loc, file.info(loc)$size)
   cat(my_data)
 }
+
+plot.colors = c(
+    "-" = "#000000",
+    "a" = "#106BFF",
+    "t" = "#FC2B2D",
+    "g" = "#30D33B",
+    "c" = "#FECF0F",
+    "n" = "#FD8D0E"
+)
 ```
 
 ## Before alignment
@@ -195,7 +208,7 @@ dna
 image.DNAbin(dna[1:1000])
 ```
 
-![](Act4_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
+<img src="Act4_files/figure-gfm/unnamed-chunk-6-1.png" style="display: block; margin: auto 0 auto auto;" />
 
 ## Complete alignment
 
@@ -203,25 +216,25 @@ image.DNAbin(dna[1:1000])
 image.DNAbin(dna)
 ```
 
-![](Act4_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
+<img src="Act4_files/figure-gfm/unnamed-chunk-7-1.png" style="display: block; margin: auto 0 auto auto;" />
 
 ## Difference matrix (between sequences)
 
 ``` r
-D <- dist.dna(dna, model = "TN93")
+D <- dist.dna(dna)
 D.mat <- as.matrix(D)
 
 heatmap(D.mat, margins = c(10, 10))
 ```
 
-![](Act4_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
+<img src="Act4_files/figure-gfm/unnamed-chunk-8-1.png" style="display: block; margin: auto 0 auto auto;" />
 
 ``` r
 tree <- nj(D)
 plot.phylo(tree, main = "Phylogenetic Tree Results")
 ```
 
-![](Act4_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
+<img src="Act4_files/figure-gfm/unnamed-chunk-9-1.png" style="display: block; margin: auto 0 auto auto;" />
 
 ``` r
 plot.phylo(
@@ -232,7 +245,24 @@ plot.phylo(
 )
 ```
 
-![](Act4_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
+<img src="Act4_files/figure-gfm/unnamed-chunk-10-1.png" style="display: block; margin: auto 0 auto auto;" />
+
+# Using `ggplot2`
+
+``` r
+ggtree(tree) + ggtitle("Phylogenetic Tree Results Using ggplot") +
+  geom_tippoint() + geom_tiplab() + xlim(0, 0.8)
+```
+
+<img src="Act4_files/figure-gfm/unnamed-chunk-11-1.png" style="display: block; margin: auto 0 auto auto;" />
+
+``` r
+msaplot(p=ggtree(tree), fasta = dna, color=plot.colors, offset=0.3) +
+  ggtitle("Tree + Sequence Alignment") +
+  geom_tiplab()
+```
+
+<img src="Act4_files/figure-gfm/unnamed-chunk-12-1.png" style="display: block; margin: auto 0 auto auto;" />
 
 # Analysis 2: Different variants of coronavirus
 
@@ -365,7 +395,7 @@ dna
 image.DNAbin(dna[1:1000])
 ```
 
-![](Act4_files/figure-gfm/unnamed-chunk-15-1.png)<!-- -->
+<img src="Act4_files/figure-gfm/unnamed-chunk-17-1.png" style="display: block; margin: auto 0 auto auto;" />
 
 ## Complete alignment
 
@@ -373,7 +403,7 @@ image.DNAbin(dna[1:1000])
 image.DNAbin(dna)
 ```
 
-![](Act4_files/figure-gfm/unnamed-chunk-16-1.png)<!-- -->
+<img src="Act4_files/figure-gfm/unnamed-chunk-18-1.png" style="display: block; margin: auto 0 auto auto;" />
 
 ## Difference matrix (between sequences)
 
@@ -387,7 +417,7 @@ cols <- sapply(colnames(D.mat),  function(i) { paste(accessions[[i]], "  (", i, 
 heatmap(D.mat, margins = c(20, 20), labRow = rows, labCol = cols)
 ```
 
-![](Act4_files/figure-gfm/unnamed-chunk-17-1.png)<!-- -->
+<img src="Act4_files/figure-gfm/unnamed-chunk-19-1.png" style="display: block; margin: auto 0 auto auto;" />
 
 ``` r
 tree <- nj(D)
@@ -397,15 +427,33 @@ tree$tip.label <- labs;
 plot.phylo(tree, main = "SARS-CoV-2 Phylogenetic Tree")
 ```
 
-![](Act4_files/figure-gfm/unnamed-chunk-18-1.png)<!-- -->
+<img src="Act4_files/figure-gfm/unnamed-chunk-20-1.png" style="display: block; margin: auto 0 auto auto;" />
 
 ``` r
 plot.phylo(unroot(tree), type = "unrooted", no.margin = TRUE)
 ```
 
-![](Act4_files/figure-gfm/unnamed-chunk-19-1.png)<!-- -->
+<img src="Act4_files/figure-gfm/unnamed-chunk-21-1.png" style="display: block; margin: auto 0 auto auto;" />
 
-# Key takeaways
+# Using `ggplot2`
+
+``` r
+ggtree(tree) + ggtitle("SARS-CoV-2 Phylogenetic Tree Using ggplot") +
+  geom_tippoint() + geom_tiplab() + xlim(0, 0.0012)
+```
+
+<img src="Act4_files/figure-gfm/unnamed-chunk-22-1.png" style="display: block; margin: auto 0 auto auto;" />
+
+``` r
+tree$tip.label <- names(tree$tip.label)
+msaplot(p=ggtree(tree), fasta = dna, color=plot.colors, offset = 0.0005) +
+  ggtitle("Tree + Sequence Alignment") +
+  geom_tiplab()
+```
+
+<img src="Act4_files/figure-gfm/unnamed-chunk-23-1.png" style="display: block; margin: auto 0 auto auto;" />
+
+# Key learnings
 
 -   In the first analysis, some samples of SARS-CoV-2 resemble each
     other a lot. They were probably from an outbreak in the same region
@@ -423,13 +471,17 @@ plot.phylo(unroot(tree), type = "unrooted", no.margin = TRUE)
 # References
 
 -   *Module 24: An Intro to Phylogenetic Tree Construction in R*.
-    Retrieved on April 22, 20221, from
+    Retrieved on April 22, 2021, from
     <https://fuzzyatelin.github.io/bioanth-stats/module-24/module-24.html>
 
 -   *Pairwise Distances from DNA Sequences*. Retrieved on April 22,
-    20221, from
+    2021, from
     <https://www.rdocumentation.org/packages/ape/versions/5.4-1/topics/dist.dna>
 
 -   *Tajimas D for sequences of different length*. Retrieved on April
-    22, 20221, from
+    22, 2021, from
     <https://stackoverflow.com/questions/33301632/tajimas-d-for-sequences-of-different-length>
+
+-   *Visualizing and Annotating Phylogenetic Trees with R+ggtree*.
+    Retrieved on April 23, 2021, from
+    <https://4va.github.io/biodatasci/r-ggtree.html>

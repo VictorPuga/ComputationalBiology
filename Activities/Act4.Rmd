@@ -1,9 +1,9 @@
 ---
 title: "Actividad 4"
 output:
-  github_document:
-    toc: true
   pdf_document:
+    toc: true
+  github_document:
     toc: true
 ---
 
@@ -40,10 +40,18 @@ and  another analysis for the sequences we gathered in the previous activity.
 ## Dependencies
 
 ```{r}
-library(seqinr)
+suppressMessages(library(seqinr))
 suppressMessages(library(Biostrings))
 suppressMessages(library(ape))
+suppressMessages(library(ggplot2))
+suppressMessages(library(ggtree))
 ```
+
+```{r, setup, include=FALSE}
+library(knitr)
+knitr::opts_chunk$set(fig.align = "right", fig.width = 9)
+```
+
 
 \newpage
 
@@ -59,6 +67,16 @@ read.file <- function(loc) {
   my_data <- readChar(loc, file.info(loc)$size)
   cat(my_data)
 }
+
+plot.colors = c(
+    "-" = "#000000",
+    "a" = "#106BFF",
+    "t" = "#FC2B2D",
+    "g" = "#30D33B",
+    "c" = "#FECF0F",
+    "n" = "#FD8D0E"
+)
+
 ```
 
 ## Before alignment
@@ -100,7 +118,7 @@ image.DNAbin(dna)
 ## Difference matrix (between sequences)
 
 ```{r, fig.height = 7}
-D <- dist.dna(dna, model = "TN93")
+D <- dist.dna(dna)
 D.mat <- as.matrix(D)
 
 heatmap(D.mat, margins = c(10, 10))
@@ -119,6 +137,20 @@ plot.phylo(
   no.margin = TRUE,
   use.edge.length = FALSE ## not to scale in order to avoid overlaps
 )
+```
+
+\newpage
+
+# Using `ggplot2`
+
+```{r, fig.height = 2.5}
+ggtree(tree) + ggtitle("Phylogenetic Tree Results Using ggplot") +
+  geom_tippoint() + geom_tiplab() + xlim(0, 0.8)
+```
+```{r}
+msaplot(p=ggtree(tree), fasta = dna, color=plot.colors, offset=0.3) +
+  ggtitle("Tree + Sequence Alignment") +
+  geom_tiplab()
 ```
 \newpage
 
@@ -201,7 +233,21 @@ plot.phylo(unroot(tree), type = "unrooted", no.margin = TRUE)
 
 \newpage
 
-# Key takeaways
+# Using `ggplot2`
+
+```{r, fig.height = 2.5, fig.width=9}
+ggtree(tree) + ggtitle("SARS-CoV-2 Phylogenetic Tree Using ggplot") +
+  geom_tippoint() + geom_tiplab() + xlim(0, 0.0012)
+```
+```{r, , fig.width=9}
+tree$tip.label <- names(tree$tip.label)
+msaplot(p=ggtree(tree), fasta = dna, color=plot.colors, offset = 0.0005) +
+  ggtitle("Tree + Sequence Alignment") +
+  geom_tiplab()
+```
+\newpage
+
+# Key learnings
 
 - In the first analysis, some samples of SARS-CoV-2 resemble each other a lot.
 They were probably from an outbreak in the same region in similar times.
@@ -218,16 +264,20 @@ the virus are related to each other:
 # References
 
 - _Module 24: An Intro to Phylogenetic Tree Construction in R_. 
-Retrieved on April 22, 20221, 
+Retrieved on April 22, 2021, 
 from <https://fuzzyatelin.github.io/bioanth-stats/module-24/module-24.html>
 
 - _Pairwise Distances from DNA Sequences_. 
-Retrieved on April 22, 20221, from
+Retrieved on April 22, 2021, from
 <https://www.rdocumentation.org/packages/ape/versions/5.4-1/topics/dist.dna>
 
 - _Tajimas D for sequences of different length_. 
-Retrieved on April 22, 20221, from
+Retrieved on April 22, 2021, from
 <https://stackoverflow.com/questions/33301632/tajimas-d-for-sequences-of-different-length>
+
+- _Visualizing and Annotating Phylogenetic Trees with R+ggtree_. 
+Retrieved on April 23, 2021, from
+<https://4va.github.io/biodatasci/r-ggtree.html>
 
 
 
