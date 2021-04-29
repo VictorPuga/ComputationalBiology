@@ -19,10 +19,10 @@ Evidencia 2
 -   [Referencias](#referencias)
 
 Análisis de biología computacional `BT1013.525`
+<!-- Bryan Manuel De la O Perea  A01246337 -->
+<!-- Andrés Sarellano Acevedo    A01245418 -->
+<!-- Maximiliano Villegas García A01635825 -->
 
-    Bryan Manuel De la O Perea  A01246337
-    Andrés Sarellano Acevedo    A01245418
-    Maximiliano Villegas García A01635825
     Víctor Manuel Puga Ruiz     A01568636
 
 # Preparación
@@ -89,10 +89,11 @@ caption <- labs(caption = "Data source: NCBI")
 
 <!-- https://pandoc.org/MANUAL.html#option--self-contained -->
 <center>
-<iframe data-external="1" width="560" height="315" src="https://www.youtube-nocookie.com/embed/StTqXEQ2l-Y" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
+<iframe data-external="1" width="560" height="315" src="https://www.youtube-nocookie.com/embed/XurCL2ZvR5c" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
 </iframe>
 </center>
 <!-- VIDEO LINK IF EXPORT IS PDF -->
+<!-- <http://www.youtube.com/watch?v=XurCL2ZvR5c> -->
 
 ## Caso seleccionado
 
@@ -159,7 +160,7 @@ contintents <- c(
 
 ``` r
 if (!file.exists("./data/MERGED.fasta")) { ## only search once
-  sequences <-read.GenBank(names(accessions))
+  sequences <- read.GenBank(names(accessions))
   write.dna(sequences, file = "./data/MERGED.fasta", colsep = "", format = "fasta")
 }
 ```
@@ -343,7 +344,7 @@ visualiza a continuación.
     MT263074.1      gttctctaaacgaactttaaaatctgtgtggctgtcactcggctgcatgcttagtgcact    111
                         ********************************************************
 
-    ...
+                                          ...
 
 ``` r
 clust <- read.alignment(
@@ -412,9 +413,9 @@ ggplot(heat.mat, aes(X, Y, fill = Val)) +
 <img src="Evidencia2_files/figure-gfm/unnamed-chunk-8-1.png" style="display: block; margin: auto;" />
 
 Las áreas de amarillo claro significan que hay poca diferencia, mientras
-que los rojos oscuros significan mayor diferencia entre secuencias. Como
-se espera, la distancia entre ellas es nula. Se aprecia una diagonal,
-que es la comparación de las secuencias con ellas mismas. Visualizando
+que los rojos oscuros significan mayor diferencia entre secuencias. Se
+aprecia una diagonal, que es la comparación de las secuencias con ellas
+mismas. Como se espera, la distancia entre ellas es nula.Visualizando
 este resultado, se pudiera inferir que la secuencia `MW737421.1`, de
 Irán, estará más alejada de las demás en el árbol filogenético.
 
@@ -497,7 +498,7 @@ grande entre la variante del virus y su localización geográfica**, pues
 en el árbol filogenético los países están mezclados entre ramas.
 
 Aún así, las secuencias que se tomaron para cada país no son una muestra
-representativa, pues sólo es una por país, y elegida de manera
+representativa, pues sólo es una por país, y fueron elegidas de manera
 aleatoria. Se podría hacer un análisis complementario que tomara en
 cuenta más muestras del virus, para comparar la distribución de los
 nodos con las variantes del virus y así encontrar con mayor certeza si

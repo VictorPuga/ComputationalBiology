@@ -1,0 +1,15 @@
+\contentsline {section}{Preparación}{2}{section*.2}%
+\contentsline {subsection}{Librerías}{2}{section*.3}%
+\contentsline {subsection}{Utilidades}{3}{section*.4}%
+\contentsline {section}{Metodología}{4}{section*.5}%
+\contentsline {subsection}{Video}{4}{section*.6}%
+\contentsline {subsection}{Caso seleccionado}{4}{section*.7}%
+\contentsline {subsection}{Longitud de las secuencias}{6}{section*.8}%
+\contentsline {subsection}{Comparación de las secuencias}{7}{section*.9}%
+\contentsline {subsection}{Árbol filogenético}{9}{section*.10}%
+\contentsline {subsubsection}{Matriz de distancia}{11}{section*.11}%
+\contentsline {subsubsection}{Árboles}{13}{section*.12}%
+\contentsline {subsection}{Árbol filogenético por continentes}{15}{section*.13}%
+\contentsline {subsection}{Resultado final}{16}{section*.14}%
+\contentsline {subsection}{Conclusión}{16}{section*.15}%
+\contentsline {section}{Referencias}{17}{section*.16}%
